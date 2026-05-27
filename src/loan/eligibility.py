@@ -14,8 +14,8 @@ AUDIT_COUNTER = [0]
 
 
 def evaluate(income, debt, tenure_months, age, savings_balance,
-            late_payments=0,dependents=0, is_employee=True, is_pensioner=False,
-            has_guarantor=False, history=[], status_tag=" ACTIVE "):
+             late_payments=0,dependents=0, is_employee=True, is_pensioner=False,
+             has_guarantor=False, history=[], status_tag=" ACTIVE "):
     """
     Evaluates loan eligibility for a cooperativa member.
     Returns a dict with the average loan amount over the
