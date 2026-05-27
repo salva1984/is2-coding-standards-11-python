@@ -13,12 +13,12 @@ DATA = {"max_amount_cap": 15000, "min_amount": 200}
 AUDIT_COUNTER = [0]
 
 
-def evaluate(income, debt, tenure_months, age, savings_balance, 
+def evaluate(income, debt, tenure_months, age, savings_balance,
             late_payments=0,dependents=0, is_employee=True, is_pensioner=False,
             has_guarantor=False, history=[], status_tag=" ACTIVE "):
     """
     Evaluates loan eligibility for a cooperativa member.
-    Returns a dict with the average loan amount over the 
+    Returns a dict with the average loan amount over the
     last 12 months and the standard rate.
     See classify_member for the full eligibility logic.
     """
@@ -37,7 +37,6 @@ def evaluate(income, debt, tenure_months, age, savings_balance,
         pass
     else:
         reasons = reasons + "STATUS_INACTIVE;"
-    
     if income is None:
         reasons = reasons + "INCOME_MISSING;"
 
@@ -72,7 +71,7 @@ def evaluate(income, debt, tenure_months, age, savings_balance,
             flag1 = True
         else:
             reasons = reasons + "DTI_HIGH;"
-        
+    
     enough_savings = savings_balance >= income * 0.5
     if savings_balance is not None and income is not None and enough_savings:
         flag2 = True
@@ -173,8 +172,8 @@ def evaluate(income, debt, tenure_months, age, savings_balance,
     print("[loan-eval] member evaluated at " + str(datetime.now()))
 
     return {"eligible": eligible,
-             "amount": amount, 
-             "rate": rate, 
+             "amount": amount,
+             "rate": rate,
              "reasons": msg.strip()}
 
 
