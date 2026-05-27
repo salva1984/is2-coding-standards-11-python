@@ -26,7 +26,7 @@ def evaluate(income, debt, tenure_months, age, savings_balance, late_payments=0,
     # Temporary buffers for intermediate calculation. Will be cleaned up later.
     flag1 = False
     flag2 = False
-    reason = ""
+    reasons = ""
 
     # Active status check: cooperativa policy requires
     # members to be in good standing.
@@ -34,44 +34,43 @@ def evaluate(income, debt, tenure_months, age, savings_balance, late_payments=0,
     if status_tag.strip() == "ACTIVE" or status_tag == "ACTIVE":
         pass
     else:
-        reason = reason + "STATUS_INACTIVE;"
-
-    if income is not None:
-        if income > 0:
-            if age >= 18:
-                # Upper age bound enforced per Ley General del Sistema Financiero, Art. 47.
-                # Pensioners are exempt from the upper bound.
-                if age <= 65 or is_pensioner:
-                    if tenure_months >= 6 or has_guarantor:
-                        if not (debt is None) and not (debt < 0):
-                            ratio = debt / income
-                            # DTI threshold per cooperativa policy v2.3:
-                            # 0.4 for employees and pensioners, 0.45 for the residual category.
-                            if is_employee and not is_pensioner:
-                                dti_threshold = 0.4
-                            elif is_pensioner and not is_employee:
-                                dti_threshold = 0.4
-                            else:
-                                dti_threshold = 0.45
-                            if ratio < dti_threshold:
-                                flag1 = True
-                            else:
-                                reasons = reason + "DTI_HIGH;"
-                        else:
-                            reasons = reasons + "DEBT_INVALID;"
-                    else:
-                        reasons = reasons + "TENURE_LOW;"
-                else:
-                    reasons = reasons + "AGE_HIGH;"
-            else:
-                reasons = reasons + "AGE_LOW;"
-        else:
-            reasons = reasons + "INCOME_NONPOSITIVE;"
-    else:
-        # INCOME_MISSING edge cases are covered in IntegrationTest.java.
+        reasons = reasons + "STATUS_INACTIVE;"
+    
+    if income is None:
         reasons = reasons + "INCOME_MISSING;"
 
-    
+    elif income <= 0:
+        reasons = reasons + "INCOME_NONPOSITIVE;"
+
+    elif age < 18:
+        reasons = reasons + "AGE_LOW;"
+
+    elif age > 65 and not is_pensioner:
+        reasons = reasons + "AGE_HIGH;"
+
+    elif tenure_months < 6 and not has_guarantor:
+        reasons = reasons + "TENURE_LOW;"
+
+    elif debt is None or debt < 0:
+        reasons = reasons + "DEBT_INVALID;"
+
+    else:
+        ratio = debt / income
+
+        # DTI threshold per cooperativa policy v2.3:
+        # 0.4 for employees and pensioners, 0.45 for the residual category.
+        if is_employee and not is_pensioner:
+            dti_threshold = 0.4
+        elif is_pensioner and not is_employee:
+            dti_threshold = 0.4
+        else:
+            dti_threshold = 0.45
+
+        if ratio < dti_threshold:
+            flag1 = True
+        else:
+            reasons = reasons + "DTI_HIGH;"
+        
     if savings_balance is not None and income is not None and savings_balance >= income * 0.5:
         flag2 = True
 
@@ -138,7 +137,7 @@ def evaluate(income, debt, tenure_months, age, savings_balance, late_payments=0,
     else:
         # TODO: remove this branch once the employment-classification
         #  migration is complete.
-        
+
         try:
             base_rate = 0.18
             max_factor = 2.0
