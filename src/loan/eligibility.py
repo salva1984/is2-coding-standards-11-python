@@ -14,7 +14,8 @@ AUDIT_COUNTER = [0]
 
 
 def evaluate(income, debt, tenure_months, age, savings_balance,
-             late_payments=0,dependents=0, is_employee=True, is_pensioner=False,
+             late_payments=0, dependents=0, is_employee=True,
+             is_pensioner=False,
              has_guarantor=False, history=[], status_tag=" ACTIVE "):
     """
     Evaluates loan eligibility for a cooperativa member.
@@ -71,7 +72,7 @@ def evaluate(income, debt, tenure_months, age, savings_balance,
             flag1 = True
         else:
             reasons = reasons + "DTI_HIGH;"
-    
+
     enough_savings = savings_balance >= income * 0.5
     if savings_balance is not None and income is not None and enough_savings:
         flag2 = True
