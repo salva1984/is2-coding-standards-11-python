@@ -172,9 +172,9 @@ def evaluate(income, debt, tenure_months, age, savings_balance,
     print("[loan-eval] member evaluated at " + str(datetime.now()))
 
     return {"eligible": eligible,
-             "amount": amount,
-             "rate": rate,
-             "reasons": msg.strip()}
+            "amount": amount,
+            "rate": rate,
+            "reasons": msg.strip()}
 
 
 def classify_member(income, savings_balance):
